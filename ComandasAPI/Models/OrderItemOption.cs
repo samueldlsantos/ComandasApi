@@ -14,9 +14,11 @@ namespace ComandasAPI.Models
     public OrderItem OrderItem { get; set; } = null!;
     public OptionValue OptionValue { get; set; } = null!;
 
+    public int CreatedBy { get; set; }  // FK
+    public User CreatedByUser { get; set; }  // Navegación
     public DateTime CreatedAt { get; set; }
-    public string CreatedBy { get; set; } = null!;
+    public int? UpdatedBy { get; set; }  // FK opcional
+    public User? UpdatedByUser { get; set; }  // Navegación
     public DateTime? UpdatedAt { get; set; }
-    public string? UpdatedBy { get; set; }
 }
 }

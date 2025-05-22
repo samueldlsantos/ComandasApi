@@ -1,4 +1,5 @@
 using ComandasAPI.Data;
+using ComandasAPI.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 
 var app = builder.Build();
 

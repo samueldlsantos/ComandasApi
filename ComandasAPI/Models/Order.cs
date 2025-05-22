@@ -8,15 +8,14 @@ namespace ComandasAPI.Models
     public class Order
     {
         public int Id { get; set; }
-        public int CreatedByUserId { get; set; }
-
-        public User CreatedByUser { get; set; } = null!;
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
 
+        public int CreatedBy { get; set; }  // FK
+        public User CreatedByUser { get; set; }  // Navegación
         public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; } = null!;
+        public int? UpdatedBy { get; set; }  // FK opcional
+        public User? UpdatedByUser { get; set; }  // Navegación
         public DateTime? UpdatedAt { get; set; }
-        public string? UpdatedBy { get; set; }
     }
 
 }
