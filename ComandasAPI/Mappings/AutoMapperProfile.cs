@@ -11,6 +11,13 @@ namespace ComandasAPI.Mappings
     {
         public AutoMapperProfile()
         {
+            CreateMap<User, UserDTO>()
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role));
+            CreateMap<UserDTO, User>();
+
+            CreateMap<Role, RoleDTO>();
+            CreateMap<RoleDTO, Role>();
+
             CreateMap<Product, ProductDTO>()
                 .ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Options));
 
