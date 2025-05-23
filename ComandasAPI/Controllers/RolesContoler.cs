@@ -51,6 +51,16 @@ namespace ComandasAPI.Controllers
         public async Task<ActionResult<RoleDTO>> CreateRole(RoleDTO roleDTO)
         {
             var role = _mapper.Map<Role>(roleDTO);
+            // Obtener el id del usuario logueado desde el token
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("Usuario no autenticado o token inválido.");
+            }
+
+            // Asignar UpdatedBy con el usuario actual
+            role.CreatedBy = userId;
+            role.CreatedAt = DateTime.UtcNow;
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 

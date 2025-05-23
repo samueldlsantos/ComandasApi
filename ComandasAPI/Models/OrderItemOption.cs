@@ -9,7 +9,7 @@ namespace ComandasAPI.Models
 {
     public int Id { get; set; }
     public int OrderItemId { get; set; }
-    public int OptionValueId { get; set; }
+    public int? OptionValueId { get; set; }
 
     public OrderItem OrderItem { get; set; } = null!;
     public OptionValue OptionValue { get; set; } = null!;

@@ -18,18 +18,26 @@ namespace ComandasAPI.Mappings
             CreateMap<Role, RoleDTO>();
             CreateMap<RoleDTO, Role>();
 
+            CreateMap<Order, OrderDTO>();
+            CreateMap<OrderDTO, Order>();
+
+            CreateMap<OrderItem, OrderItemDTO>();
+            CreateMap<OrderItemDTO, OrderItem>();
+
+            CreateMap<OrderItemOption, OrderItemOptionDTO>();
+            CreateMap<OrderItemOptionDTO, OrderItemOption>();
+
             CreateMap<Product, ProductDTO>()
                 .ForMember(dest => dest.Options, opt => opt.MapFrom(src => src.Options));
+            CreateMap<ProductDTO, Product>();
 
             CreateMap<ProductOption, ProductOptionDTO>()
                 .ForMember(dest => dest.Values, opt => opt.MapFrom(src => src.Values));
+            CreateMap<ProductOptionDTO, ProductOption>();
 
             CreateMap<OptionValue, OptionValueDTO>();
-
-            // Mapeos inversos si planeas recibir datos del cliente y actualizar modelos
-            CreateMap<ProductDTO, Product>();
-            CreateMap<ProductOptionDTO, ProductOption>();
             CreateMap<OptionValueDTO, OptionValue>();
+
         }
     }
 }

@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using ComandasAPI.Data;
 using ComandasAPI.DTO;
 using ComandasAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ComandasAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -52,6 +55,16 @@ namespace ComandasAPI.Controllers
         public async Task<ActionResult<Product>> CreateUser(UserDTO userDTO)
         {
             var user = _mapper.Map<User>(userDTO);
+             // Obtener el id del usuario logueado desde el token
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("Usuario no autenticado o token inválido.");
+            }
+
+            // Asignar CreatedBy con el usuario actual
+            user.CreatedBy = userId;
+            user.CreatedAt = DateTime.UtcNow;
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
@@ -62,12 +75,41 @@ namespace ComandasAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UserDTO userDTO)
         {
-            var user = _mapper.Map<User>(userDTO);
 
-            if (id != user.Id) return BadRequest();
+            if (id != userDTO.Id)
+            return BadRequest();
 
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            // Buscar el usuario existente en la base de datos
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound();
+
+            // Mapear los datos recibidos al objeto role existente (sin sobreescribir UpdatedBy aún)
+            _mapper.Map(userDTO, user);
+
+            // Obtener el id del usuario logueado desde el token
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("Usuario no autenticado o token inválido.");
+            }
+
+            // Asignar UpdatedBy con el usuario actual
+            user.UpdatedBy = userId;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Roles.Any(r => r.Id == id))
+                    return NotFound();
+
+                throw;
+            }
+
             return NoContent();
         }
         // Eliminar un usuario
